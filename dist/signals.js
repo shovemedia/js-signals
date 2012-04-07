@@ -5,7 +5,7 @@
  * JS Signals <http://millermedeiros.github.com/js-signals/>
  * Released under the MIT license
  * Author: Miller Medeiros
- * Version: 0.7.4 - Build: 252 (2012/02/24 10:30 PM)
+ * Version: 0.7.3 - Build: 251 (2012/02/02 10:20 AM)
  */
 
 (function(global){
@@ -20,7 +20,7 @@
          * @type String
          * @const
          */
-        VERSION : '0.7.4'
+        VERSION : '0.7.3'
     };
 
 
@@ -184,6 +184,23 @@
          * @type Array.<SignalBinding>
          * @private
          */
+ 
+    	var args = Array.prototype.slice.call(arguments);
+		
+		if (args.length > 1 && (!(args[0] instanceof Object)) )
+		{
+			//use standard arguments 'array'
+			this._argumentTypes = args;
+			this._argumentIsHash = false;
+       	}
+       	else if (args.length == 1 && (args[0] instanceof Object) )
+       	{
+       		//use single-argument named hash
+       		this._argumentTypes = arguments[0];
+       		this._argumentIsHash = true;
+       	}
+       	
+        
         this._bindings = [];
         this._prevParams = null;
     };
@@ -359,6 +376,49 @@
             var paramsArr = Array.prototype.slice.call(arguments),
                 n = this._bindings.length,
                 bindings;
+                
+                
+            // strict parameter type checking
+                
+             
+            if (this._argumentTypes)
+	        {		      
+	        	// single argument named hash
+	        	if (this._argumentIsHash)
+	        	{
+	        		if (paramsArr.length != 1)
+			        {
+			        	throw ( new Error ('strict Signal argument length Mismatch. Expected single argument, named hash. Got: ' + paramsArr.length));
+			        }
+			        
+	        		var signalData = paramsArr[0];
+			        
+			        for (var i in this._argumentTypes)
+			        {
+			        	var value = signalData[i];
+			        	var expectedType = this._argumentTypes[i];
+			        	
+						verifyType(value, expectedType, i);			        	
+			        }	
+	        	}
+	        	else
+	        	{
+	        		// standard arguments 'array'
+		        	if (paramsArr.length != this._argumentTypes.length)
+		        	{
+		        		throw ( new Error ('strict Signal argument length Mismatch. Expected: ' + this._argumentTypes.length + '. Got: ' + paramsArr.length));
+		        	}
+		        	  
+			        for (var i=0, len=this._argumentTypes.length; i<len; i++)
+			        {
+			        	var value = paramsArr[i];
+			        	var expectedType = this._argumentTypes[i];
+			        	
+						verifyType(value, expectedType, i);			        	
+			        }	        		
+	        	}
+
+		   	}    
 
             if (this.memorize) {
                 this._prevParams = paramsArr;
@@ -403,11 +463,43 @@
         }
 
     };
+    
+    var verifyType = function (value, expectedType, i)
+    {
+    	switch (expectedType)
+    	{
+    		case Number:
+    			if (!($.isNumeric(value) && !$.isArray(value) && !(value.constructor === String || value instanceof String)))
+    			{
+    				throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not Number'));
+    			}
+    		break;
+    		case String:
+    		    if (!(value.constructor === String || value instanceof String))
+    			{
+    				throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not String'));
+    			}
+    		break;
+    		case Array:
+    			if (!$.isArray(value))
+    			{
+    				throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not Array'));		        				
+    			}
+    		break;
+    		default:
+    			if (!(value instanceof expectedType || expectedType.isPrototypeOf(value)) )
+        		{
+        			throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i));
+        		}
+    			break;
+    	}    	
+    }
 
 
     //exports to multiple environments
     if(typeof define === 'function' && define.amd){ //AMD
-        define(signals);
+        //define('signals', [], signals);
+    	define([], function () { return signals; });    	
     } else if (typeof module !== 'undefined' && module.exports){ //node
         module.exports = signals;
     } else { //browser
