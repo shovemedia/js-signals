@@ -1,3 +1,25 @@
+# Strict enhancement by jon@shovemedia.com #
+When you create a new Signal, you can do it the normal way:
+
+mySignal = new Signal(); // no argument verification rules will be applied.
+
+or with typed arguments a la Robert Penner's original AS3 implementation:
+
+mySignal = new Signal( Number, String, Array, Date, Function, MyClass );
+
+or with a single argument containing a hash of named keys:
+
+mySignal = new Signal( {x:Number, y:String, z:Array, a:Date, b:Function, c:MyClass} );
+
+when you dispatch, arguments are verified against whatever passed to the constructor.
+Currently the only behavior is to throw an error if verification fails.
+
+The idea is to find mis-matches more quickly during development -- you *should* be
+able to swap it for the original version during deployment (no checks == better performance).
+
+I haven't done anything yet with allowing nulls in certain cases, i.e. optional arguments.
+We'll see if it actually comes up in practice.
+
 
 # JS-Signals #
 
