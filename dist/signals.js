@@ -187,7 +187,7 @@
  
     	var args = Array.prototype.slice.call(arguments);
 		
-		if (args.length > 1 && (!(args[0] instanceof Object)) )
+		if (args.length > 1 || (!(args[0] instanceof Object)) )
 		{
 			//use standard arguments 'array'
 			this._argumentTypes = args;
