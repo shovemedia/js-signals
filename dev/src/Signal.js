@@ -20,6 +20,23 @@
          * @type Array.<SignalBinding>
          * @private
          */
+         
+        var args = Array.prototype.slice.call(arguments);
+        
+        if (args.length > 1 || (!(args[0] instanceof Object)) )
+        {
+               //use standard arguments 'array'
+               this._argumentTypes = args;
+               this._argumentIsHash = false;
+        }
+        else if (args.length == 1 && (args[0] instanceof Object) )
+        {
+               //use single-argument named hash
+               this._argumentTypes = arguments[0];
+               this._argumentIsHash = true;
+        }
+               
+                 
         this._bindings = [];
         this._prevParams = null;
     };
@@ -196,6 +213,47 @@
                 n = this._bindings.length,
                 bindings;
 
+                
+            // strict parameter type checking
+            
+            if (this._argumentTypes)
+            {             
+                // single argument named hash
+                if (this._argumentIsHash)
+                {
+                    if (paramsArr.length != 1)
+                    {
+                        throw ( new Error ('strict Signal argument length Mismatch. Expected single argument, named hash. Got: ' + paramsArr.length));
+                    }
+                    
+                    var signalData = paramsArr[0];
+                    
+                    for (var i in this._argumentTypes)
+                    {
+                        var value = signalData[i];
+                        var expectedType = this._argumentTypes[i];
+                        
+                        verifyType(value, expectedType, i);                     
+                    }   
+                }
+                else
+                {
+                    // standard arguments 'array'
+                    if (paramsArr.length != this._argumentTypes.length)
+                    {
+                        throw ( new Error ('strict Signal argument length Mismatch. Expected: ' + this._argumentTypes.length + '. Got: ' + paramsArr.length));
+                    }
+                      
+                    for (var i=0, len=this._argumentTypes.length; i<len; i++)
+                    {
+                        var value = paramsArr[i];
+                        var expectedType = this._argumentTypes[i];
+                        
+                        verifyType(value, expectedType, i);                     
+                    }                   
+                }
+            }    
+
             if (this.memorize) {
                 this._prevParams = paramsArr;
             }
@@ -239,3 +297,41 @@
         }
 
     };
+
+    var objectToString = Object.prototype.toString
+    , isArray = (Array.isArray) || function(obj) {
+        return objectToString.call(obj) == '[object Array]';
+    }
+    , isNumeric = function(a) {
+        return !isNaN(parseFloat(a))&&isFinite(a)
+    }
+    , verifyType = function (value, expectedType, i)
+    {
+        switch (expectedType)
+        {
+            case Number:
+                if (!(isNumeric(value) && !isArray(value) && !(value.constructor === String || value instanceof String)))
+                {
+                    throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not Number'));
+                }
+            break;
+            case String:
+                if (!(value.constructor === String || value instanceof String))
+                {
+                    throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not String'));
+                }
+            break;
+            case Array:
+                if (!isArray(value))
+                {
+                    throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i + ' is not Array'));                             
+                }
+            break;
+            default:
+                if (!(value instanceof expectedType || expectedType.isPrototypeOf(value)) )
+                {
+                    throw ( new Error ('strict Signal argument Type Mismatch on argument ' + i));
+                }
+                break;
+        }       
+    }
