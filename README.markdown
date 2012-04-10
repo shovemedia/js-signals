@@ -1,4 +1,6 @@
-# Strict enhancement by jon@shovemedia.com #
+# Strict Type Checking #
+(enhancement by jon@shovemedia.com)
+
 When you create a new Signal, you can do it the normal way:
 
 mySignal = new Signal(); // no argument verification rules will be applied.

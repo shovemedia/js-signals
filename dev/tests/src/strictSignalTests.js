@@ -1,10 +1,5 @@
-/*global YUI:false, signals:false */
-/*jshint onevar:false, asi:true */
-YUI().use('node', 'console', 'test', function (Y){
-
-    //==============================================================================
-    // BASIC TEST ------------------------------------------------------------------
-
+YUI().use('node', 'console', 'test', function (Y){		
+		
     var basic = new Y.Test.Case({
 
         //name of the test case - if not provided, one is auto-generated
@@ -22,7 +17,7 @@ YUI().use('node', 'console', 'test', function (Y){
                 testAddSameListenerMixed1 : 'You cannot add() then addOnce() the same listener without removing the relationship first.',
                 testAddSameListenerMixed2 : 'You cannot addOnce() then add() the same listener without removing the relationship first.',
                 testRemoveNull : 'listener is a required param of remove() and should be a Function.',
-                testBindingDispose : 'b1.dispose is not a function',
+                testBindingDispose : true,
                 testDispose1 : true,
                 testDispose2 : true,
                 testDispose3 : true,
@@ -1419,25 +1414,1130 @@ YUI().use('node', 'console', 'test', function (Y){
     });
 
 
-    //==============================================================================
-    // INIT ------------------------------------------------------------------------
 
-    //create the console
-    var r = new Y.Console({
-        verbose : true,
-        newestOnTop : false
-    });
 
-    r.render('#testLogger');
 
-    Y.Test.Runner.add(basic);
 
-    Y.Test.Runner.on('complete', function(){
-        var c = document.getElementById('coverageOutput');
-        if(c) c.value = Y.Test.Runner.getCoverage(Y.Coverage.Format.JSON);
-    });
 
-    //run the tests
-    Y.Test.Runner.run();
 
+var basic2 = new Y.Test.Case({
+
+		//name of the test case - if not provided, one is auto-generated
+		name : "Strict Signal Test -- Typed dispatch arguments",
+
+		//---------------------------------------------------------------------
+		// Special instructions
+		//---------------------------------------------------------------------
+
+		_should: {
+			ignore: {},
+			error : {
+				testNumberFail1 : true,
+				testNumberFail1a : true,
+				testNumberFail1b : true,
+				testNumberFail1c : true,
+				testNumberFail1d : true,
+				testNumberFail1e : true,
+				testNumberFail1f : true,
+				testNumberFail2 : true,
+				testNumberFail2a : true,
+				testNumberFail2b : true,
+				testNumberFail2c : true,
+				testNumberFail3 : true,
+				testNumberFail4 : true,
+				testNumberFail5 : true,
+				testNumberFail6 : true,
+				testNumberFail7 : true,
+				
+				testStringFail1 : true,
+				testStringFail2 : true,
+				testStringFail3 : true,
+				testStringFail4 : true,
+				testStringFail5 : true,
+				testStringFail6 : true,
+				testStringFail7 : true,
+				
+				testDateFail1	: true,
+				testDateFail2	: true,
+				testDateFail3	: true,
+				
+				testArrayFail1	: true,
+				testArrayFail2	: true,
+				testArrayFail3	: true,
+				testArrayFail4	: true,
+
+				testObjectFail1	: true,
+				testObjectFail2	: true,
+				testObjectFail3	: true,
+				testObjectFail4	: true,
+
+				testCustomClassFail1	: true,
+				testCustomClassFail2	: true,
+				testCustomClassFail3	: true,
+				testCustomClassFail4	: true,
+
+				testMixedFail1	: true, 
+				testMixedFail2	: true,
+				testMixedFail3	: true, 
+				testMixedFail4	: true,
+				testMixedFail5	: true 
+			}
+			
+/*
+
+ */			
+			
+			
+		},
+
+		//---------------------------------------------------------------------
+		// setUp and tearDown
+		//---------------------------------------------------------------------
+
+		/*
+		 * Sets up data that is needed by each test.
+		 */
+		setUp : function(){
+			
+			CustomClass = function () {
+				this.foobar = 12345;
+			}
+			CustomClass.prototype.method = function ()
+			{}
+			
+			
+			CustomSubClass = function () {
+			}
+			
+			CustomSubClass.prototype = Object.create(CustomClass.prototype);
+			
+			CustomSubClass.prototype.method = function ()
+			{}
+			
+			CustomSubClass.prototype.constructor = CustomSubClass;
+			CustomSubClass.prototype.superConstructor = CustomClass;
+			
+
+			
+			this.x;
+			this.y;
+			this.z;
+			
+			this.signalNumber1 = new signals.Signal(Number);
+			this.signalNumber2 = new signals.Signal(Number, Number);
+			this.signalNumber3 = new signals.Signal(Number, Number, Number);
+
+			this.signalString1 = new signals.Signal(String);
+			this.signalString2 = new signals.Signal(String, String);
+			this.signalString3 = new signals.Signal(String, String, String);
+
+			this.signalDate1 = new signals.Signal(Date);
+			this.signalDate2 = new signals.Signal(Date, Date);
+			this.signalDate3 = new signals.Signal(Date, Date, Date);
+			
+			this.signalArray1 = new signals.Signal(Array);
+			this.signalArray2 = new signals.Signal(Array, Array);
+			this.signalArray3 = new signals.Signal(Array, Array, Array);
+			
+			this.signalObject1 = new signals.Signal(Object);
+			this.signalObject2 = new signals.Signal(Object, Object);
+			this.signalObject3 = new signals.Signal(Object, Object, Object);
+			
+			this.signalCustomClass1 = new signals.Signal(CustomClass);
+			this.signalCustomClass2 = new signals.Signal(CustomClass, CustomClass);
+			this.signalCustomClass3 = new signals.Signal(CustomClass, CustomClass, CustomClass);
+			
+			this.signalMixed = new signals.Signal(Number, String, Date, Array, Object, CustomClass);
+
+		},
+
+		/*
+		 * Cleans up everything that was created by setUp().
+		 */
+		tearDown : function(){
+			delete this.signalNumber1;
+			delete this.signalNumber2;
+			delete this.signalNumber3;
+			
+			delete this.signalString1;
+			delete this.signalString2;
+			delete this.signalString3;
+			
+			delete this.signalDate1;
+			delete this.signalDate2;
+			delete this.signalDate3;
+			
+			delete this.signalArray1;
+			delete this.signalArray2;
+			delete this.signalArray3;
+			
+			delete this.signalObject1;
+			delete this.signalObject2;
+			delete this.signalObject3;
+			
+			delete this.signalCustomClass1;
+			delete this.signalCustomClass2;
+			delete this.signalCustomClass3;
+			
+			delete this.signalMixed;
+		},
+
+		//---------------------------------------------------------------------
+		// Test methods - names must begin with "test"
+		//---------------------------------------------------------------------
+
+		testSignalType : function(){
+			Y.Assert.isObject(this.signalNumber1);
+			Y.Assert.isObject(this.signalNumber2);
+			Y.Assert.isObject(this.signalNumber3);
+			
+			Y.Assert.isObject(this.signalString1);
+			Y.Assert.isObject(this.signalString2);
+			Y.Assert.isObject(this.signalString3);
+			
+			Y.Assert.isObject(this.signalDate1);
+			Y.Assert.isObject(this.signalDate2);
+			Y.Assert.isObject(this.signalDate3);
+			
+			Y.Assert.isObject(this.signalArray1);
+			Y.Assert.isObject(this.signalArray2);
+			Y.Assert.isObject(this.signalArray3);
+			
+			Y.Assert.isObject(this.signalObject1);
+			Y.Assert.isObject(this.signalObject2);
+			Y.Assert.isObject(this.signalObject3);
+			
+			Y.Assert.isObject(this.signalCustomClass1);
+			Y.Assert.isObject(this.signalCustomClass2);
+			Y.Assert.isObject(this.signalCustomClass3);
+			
+			Y.Assert.isObject(this.signalMixed);
+
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalMixed);
+		},
+
+		//-------------------------- NUMBER ---------------------------------------//
+
+		testNumber : function(){
+			this.signalNumber1.add(function(x){this.x = x;}, this);
+			this.signalNumber2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalNumber3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			this.signalNumber1.dispatch(0);
+			this.signalNumber1.dispatch(1);
+			this.signalNumber1.dispatch(10);
+			this.signalNumber1.dispatch(-10);
+			
+			this.signalNumber2.dispatch(0, 0);
+			this.signalNumber2.dispatch(1, 1);
+			this.signalNumber2.dispatch(10, 100);
+			this.signalNumber2.dispatch(-10, -100);
+			
+			
+			this.signalNumber3.dispatch(0, 0, 1);
+			this.signalNumber3.dispatch(1, 0, 1);
+			this.signalNumber3.dispatch(10, 100, 1000);
+		   	this.signalNumber3.dispatch(-10, -100, -1000);
+			
+		},
+
+		testNumberFail1 : function(){			
+			this.signalNumber1.dispatch();
+		},
+
+		testNumberFail1a : function(){			
+			this.signalNumber1.dispatch('ABC');
+		},
+		testNumberFail1b : function(){			
+			this.signalNumber1.dispatch([123]);
+		},
+		testNumberFail1c : function(){			
+			this.signalNumber1.dispatch(['123']);
+		},
+		testNumberFail1d : function(){			
+			this.signalNumber1.dispatch([]);
+		},
+		testNumberFail1e : function(){			
+			this.signalNumber1.dispatch({});
+		},
+		testNumberFail1f : function(){			
+			this.signalNumber1.dispatch(new Date());
+		},
+
+		testNumberFail2 : function(){			
+			this.signalNumber1.dispatch(0, 0);
+		},
+		
+		testNumberFail2a : function(){			
+			this.signalNumber2.dispatch('123', 1);
+		},
+		testNumberFail2b : function(){			
+			this.signalNumber2.dispatch(1, '123');
+		},
+		testNumberFail2c : function(){			
+			this.signalNumber2.dispatch('ABC', '123');
+		},
+
+		testNumberFail3 : function(){			
+			this.signalNumber1.dispatch(1, 1);
+		},
+
+		testNumberFail4 : function(){			
+			this.signalNumber3.dispatch(10, 100);
+		},
+
+		testNumberFail5 : function(){			
+			this.signalNumber2.dispatch();
+		},
+
+		testNumberFail6 : function(){			
+			this.signalNumber2.dispatch(100);
+		},
+
+		testNumberFail7 : function(){		
+			this.signalNumber3.dispatch(10, 100, 1000, 1);
+		},
+
+		//-------------------------- STRING ---------------------------------------//
+
+		testString : function(){
+			this.signalString1.add(function(x){this.x = x;}, this);
+			this.signalString2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalString3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			this.signalString1.dispatch('0');
+			this.signalString1.dispatch('1');
+			this.signalString1.dispatch('');
+			this.signalString1.dispatch('abc');
+			this.signalString1.dispatch('many words');
+			
+			this.signalString2.dispatch('0', 'ABC');
+			this.signalString2.dispatch('ABC', '123');
+			
+			this.signalString3.dispatch('A', 'A', 'B');
+			this.signalString3.dispatch('A', 'B', 'C');
+			this.signalString3.dispatch('A', 'B', 'a few words');
+			
+		},
+
+		testStringFail1 : function(){			
+			this.signalString1.dispatch();
+		},
+
+		testStringFail2 : function(){			
+			this.signalString1.dispatch('', 'abc');
+		},
+
+		testStringFail3 : function(){			
+			this.signalString1.dispatch(1);
+		},
+
+		testStringFail4 : function(){			
+			this.signalString3.dispatch('abc', 'ABC');
+		},
+
+		testStringFail5 : function(){			
+			this.signalString2.dispatch('A', 'B', 'C');
+		},
+
+		testStringFail6 : function(){			
+			this.signalString2.dispatch('A', 123);
+		},
+
+		testStringFail7 : function(){
+			this.signalString3.dispatch('ABC', 'ABC', 'ABC', 'ABC');
+		},
+		
+		//-------------------------- DATE ---------------------------------------//
+
+		testDate : function(){
+			this.signalDate1.add(function(x){this.x = x;}, this);
+			this.signalDate2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalDate3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var date1 = new Date();
+			var date2 = new Date(10000);
+			var date3 = new Date(100000);
+			
+			this.signalDate1.dispatch(date1);
+			this.signalDate1.dispatch(date2);
+			this.signalDate1.dispatch(date3);
+			
+			this.signalDate2.dispatch(date1, date2);
+			this.signalDate2.dispatch(date2, date3);
+			
+			this.signalDate3.dispatch(date1, date2, date3);
+		},
+		
+		testDateFail1 : function(){			
+			this.signalDate1.dispatch();
+		},
+		
+		testDateFail2 : function(){			
+			this.signalDate1.dispatch(123);
+		},
+		
+		testDateFail3 : function(){			
+			this.signalDate2.dispatch(new Date(), 123);
+		},
+		
+		
+		
+		
+		
+		//-------------------------- Array ---------------------------------------//
+
+		testArray : function(){
+			this.signalArray1.add(function(x){this.x = x;}, this);
+			this.signalArray2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalArray3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var array1 = new Array(1,2,3,4,5,6,7,8);
+			var array2 = [];
+			var array3 = [123, 'abc', {}, new Date()];
+			
+			this.signalArray1.dispatch(array1);
+			this.signalArray1.dispatch(array2);
+			this.signalArray1.dispatch(array3);
+			
+			this.signalArray2.dispatch(array1, array2);
+			this.signalArray2.dispatch(array2, array3);
+			
+			this.signalArray3.dispatch(array1, array2, array3);
+		},
+		
+		testArrayFail1 : function ()
+		{
+			this.signalArray1.dispatch()
+		},
+		testArrayFail2 : function ()
+		{
+			this.signalArray1.dispatch({})
+		},
+		testArrayFail3 : function ()
+		{
+			this.signalArray1.dispatch(123)
+		},
+		testArrayFail4 : function ()
+		{
+			this.signalArray1.dispatch('Array')
+		},
+
+		
+		//-------------------------- Object ---------------------------------------//
+
+		testObject : function(){
+			this.signalObject1.add(function(x){this.x = x;}, this);
+			this.signalObject2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalObject3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var object1 = new Object();
+			var object2 = {};
+			var object3 = {a:123, b:'abc', c:{}, d:new Date()};
+			
+			this.signalObject1.dispatch(object1);
+			this.signalObject1.dispatch(object2);
+			this.signalObject1.dispatch(object3);
+			
+			this.signalObject2.dispatch(object1, object2);
+			this.signalObject2.dispatch(object2, object3);
+			
+			this.signalObject3.dispatch(object1, object2, object3);
+		},
+		
+		testObjectFail1 : function ()
+		{
+			this.signalObject1.dispatch()
+		},
+		testObjectFail2 : function ()
+		{
+			this.signalObject1.dispatch(undefined)
+		},
+		testObjectFail3 : function ()
+		{
+			this.signalObject1.dispatch(123)
+		},
+		testObjectFail4 : function ()
+		{
+			this.signalObject1.dispatch('Object')
+		},
+		
+		//-------------------------- CustomClass ---------------------------------------//
+
+		testCustomClass : function(){
+			this.signalCustomClass1.add(function(x){this.x = x;}, this);
+			this.signalCustomClass2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalCustomClass3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var obj1 = new CustomClass();
+			var obj2 = new CustomSubClass();			
+			var obj3 = Object.create(CustomClass);
+			var obj4 = Object.create(obj1);
+			var obj5 = Object.create(obj2);
+			
+			
+			this.signalCustomClass1.dispatch(obj1);
+			this.signalCustomClass1.dispatch(obj2);
+			this.signalCustomClass1.dispatch(obj3);
+			this.signalCustomClass1.dispatch(obj4);
+			this.signalCustomClass1.dispatch(obj5);
+			
+			
+			this.signalCustomClass2.dispatch(obj1, obj2);
+			this.signalCustomClass2.dispatch(obj2, obj3);
+			
+			this.signalCustomClass3.dispatch(obj1, obj2, obj3);
+		},
+		
+
+
+		testCustomClassFail1 : function ()
+		{
+			this.signalCustomClass1.dispatch()
+		},
+		testCustomClassFail2 : function ()
+		{
+			this.signalCustomClass1.dispatch([])
+		},
+		testCustomClassFail3 : function ()
+		{
+			this.signalCustomClass1.dispatch({})
+		},
+		testCustomClassFail4 : function ()
+		{
+			this.signalCustomClass1.dispatch('CustomClass')
+		},		
+		
+		//-------------------------- Mixed ---------------------------------------//
+
+		testMixed : function(){
+			//this.signalMixed = new signals.Signal(Number, String, Date, Array, Object, CustomClass);
+
+			this.signalMixed.add(function(a, b, c, d, e, f){}, this);
+
+			this.signalMixed.dispatch(0, '', new Date(), [], {}, new CustomClass());
+			this.signalMixed.dispatch(-1, 'ABC', new Date(1232456), [1,2,3], {a:123, b:'ABC'}, new CustomSubClass());
+		},
+		
+		testMixedFail1 : function ()
+		{
+			this.signalMixed.dispatch()
+		},
+		testMixedFail2 : function ()
+		{
+			this.signalMixed.dispatch([])
+		},
+		testMixedFail3 : function ()
+		{
+			this.signalMixed.dispatch({})
+		},
+		testMixedFail4 : function ()
+		{
+			this.signalMixed.dispatch(-1, 'ABC', new Date(1232456), [1,2,3], {a:123, b:'ABC'}, new Object());
+		},
+		testMixedFail5 : function ()
+		{
+			this.signalMixed.dispatch(-1, 'ABC', new Date(1232456), [1,2,3], {a:123, b:'ABC'}, new CustomClass(), '');
+		}
+		
+		
+		
+		
+	});
+
+
+
+
+var basic3 = new Y.Test.Case({
+
+		//name of the test case - if not provided, one is auto-generated
+		name : "Strict Signal Test -- single object containing dispatch named types.",
+
+		//---------------------------------------------------------------------
+		// Special instructions
+		//---------------------------------------------------------------------
+
+		_should: {
+			ignore: {},
+			error : {
+				testNumberFail1 : true,
+				testNumberFail1a : true,
+				testNumberFail1b : true,
+				testNumberFail1c : true,
+				testNumberFail1d : true,
+				testNumberFail1e : true,
+				testNumberFail1f : true,
+				
+				testNumberFail2a : true,
+				testNumberFail2b : true,
+				testNumberFail2c : true,
+				
+				testNumberFail4 : true,
+				testNumberFail5 : true,
+				testNumberFail6 : true,
+				
+				testStringFail1 : true,
+				
+				testStringFail3 : true,
+				testStringFail4 : true,
+				testStringFail5 : true,
+				testStringFail6 : true,
+				testStringFail7 : true,
+				
+				testDateFail1	: true,
+				testDateFail2	: true,
+				testDateFail3	: true,
+				
+				testArrayFail1	: true,
+				testArrayFail2	: true,
+				testArrayFail3	: true,
+				testArrayFail4	: true,
+
+				testObjectFail1	: true,
+				testObjectFail2	: true,
+				testObjectFail3	: true,
+				testObjectFail4	: true,
+
+				testCustomClassFail1	: true,
+				testCustomClassFail2	: true,
+				testCustomClassFail3	: true,
+				testCustomClassFail4	: true,
+
+				testMixedFail1	: true, 
+				testMixedFail2	: true,
+				testMixedFail3	: true, 
+				testMixedFail4	: true,
+				testMixedFail5	: true 
+			}
+			
+/*
+
+ */			
+			
+			
+		},
+
+		//---------------------------------------------------------------------
+		// setUp and tearDown
+		//---------------------------------------------------------------------
+
+		/*
+		 * Sets up data that is needed by each test.
+		 */
+		setUp : function(){
+			
+			CustomClass = function () {
+				this.foobar = 12345;
+			}
+			CustomClass.prototype.method = function ()
+			{}
+			
+			
+			CustomSubClass = function () {
+			}
+			
+			CustomSubClass.prototype = Object.create(CustomClass.prototype);
+			
+			CustomSubClass.prototype.method = function ()
+			{}
+			
+			CustomSubClass.prototype.constructor = CustomSubClass;
+			CustomSubClass.prototype.superConstructor = CustomClass;
+			
+
+			
+			this.x;
+			this.y;
+			this.z;
+			
+			this.signalNumber1 = new signals.Signal({x:Number});
+			this.signalNumber2 = new signals.Signal({x:Number, y:Number});
+			this.signalNumber3 = new signals.Signal({x:Number, y:Number, z:Number});
+
+			this.signalString1 = new signals.Signal({x:String});
+			this.signalString2 = new signals.Signal({x:String, y:String});
+			this.signalString3 = new signals.Signal({x:String, y:String, z:String});
+
+			this.signalDate1 = new signals.Signal({x:Date});
+			this.signalDate2 = new signals.Signal({x:Date, y:Date});
+			this.signalDate3 = new signals.Signal({x:Date, y:Date, z:Date});
+			
+			this.signalArray1 = new signals.Signal({x:Array});
+			this.signalArray2 = new signals.Signal({x:Array, y:Array});
+			this.signalArray3 = new signals.Signal({x:Array, y:Array, z:Array});
+			
+			this.signalObject1 = new signals.Signal({x:Object});
+			this.signalObject2 = new signals.Signal({x:Object, y:Object});
+			this.signalObject3 = new signals.Signal({x:Object, y:Object, z:Object});
+			
+			this.signalCustomClass1 = new signals.Signal({x:CustomClass});
+			this.signalCustomClass2 = new signals.Signal({x:CustomClass, y:CustomClass});
+			this.signalCustomClass3 = new signals.Signal({x:CustomClass, y:CustomClass, z:CustomClass});
+			
+			this.signalMixed = new signals.Signal({x:Number, y:String, z:Date, a:Array, b:Object, c:CustomClass});
+
+		},
+
+		/*
+		 * Cleans up everything that was created by setUp().
+		 */
+		tearDown : function(){
+			delete this.signalNumber1;
+			delete this.signalNumber2;
+			delete this.signalNumber3;
+			
+			delete this.signalString1;
+			delete this.signalString2;
+			delete this.signalString3;
+			
+			delete this.signalDate1;
+			delete this.signalDate2;
+			delete this.signalDate3;
+			
+			delete this.signalArray1;
+			delete this.signalArray2;
+			delete this.signalArray3;
+			
+			delete this.signalObject1;
+			delete this.signalObject2;
+			delete this.signalObject3;
+			
+			delete this.signalCustomClass1;
+			delete this.signalCustomClass2;
+			delete this.signalCustomClass3;
+			
+			delete this.signalMixed;
+		},
+
+		//---------------------------------------------------------------------
+		// Test methods - names must begin with "test"
+		//---------------------------------------------------------------------
+
+		testSignalType : function(){
+			Y.Assert.isObject(this.signalNumber1);
+			Y.Assert.isObject(this.signalNumber2);
+			Y.Assert.isObject(this.signalNumber3);
+			
+			Y.Assert.isObject(this.signalString1);
+			Y.Assert.isObject(this.signalString2);
+			Y.Assert.isObject(this.signalString3);
+			
+			Y.Assert.isObject(this.signalDate1);
+			Y.Assert.isObject(this.signalDate2);
+			Y.Assert.isObject(this.signalDate3);
+			
+			Y.Assert.isObject(this.signalArray1);
+			Y.Assert.isObject(this.signalArray2);
+			Y.Assert.isObject(this.signalArray3);
+			
+			Y.Assert.isObject(this.signalObject1);
+			Y.Assert.isObject(this.signalObject2);
+			Y.Assert.isObject(this.signalObject3);
+			
+			Y.Assert.isObject(this.signalCustomClass1);
+			Y.Assert.isObject(this.signalCustomClass2);
+			Y.Assert.isObject(this.signalCustomClass3);
+			
+			Y.Assert.isObject(this.signalMixed);
+
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalNumber3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalString3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalDate3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalArray3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalObject3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass1);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass2);
+			Y.Assert.isInstanceOf(signals.Signal, this.signalCustomClass3);
+			
+			Y.Assert.isInstanceOf(signals.Signal, this.signalMixed);
+		},
+
+		//-------------------------- NUMBER ---------------------------------------//
+
+		testNumber : function(){
+			this.signalNumber1.add(function(x){this.x = x;}, this);
+			this.signalNumber2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalNumber3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			this.signalNumber1.dispatch({x:0});
+			this.signalNumber1.dispatch({x:1});
+			this.signalNumber1.dispatch({x:10});
+			this.signalNumber1.dispatch({x:-10});
+			
+			this.signalNumber2.dispatch({x:0, y:0});
+			this.signalNumber2.dispatch({x:1, y:1});
+			this.signalNumber2.dispatch({x:10, y:100});
+			this.signalNumber2.dispatch({x:-10, y:-100});
+			
+			
+			this.signalNumber3.dispatch({x:0, y:0, z:1});
+			this.signalNumber3.dispatch({x:1, y:0, z:1});
+			this.signalNumber3.dispatch({x:10, y:100, z:1000});
+		   	this.signalNumber3.dispatch({x:-10, y:-100, z:-1000});
+			
+		},
+
+		testNumberFail1 : function(){			
+			this.signalNumber1.dispatch();
+		},
+
+		testNumberFail1a : function(){			
+			this.signalNumber1.dispatch({x:'ABC'});
+		},
+		testNumberFail1b : function(){			
+			this.signalNumber1.dispatch({y:123});
+		},
+		testNumberFail1c : function(){			
+			this.signalNumber1.dispatch({x:[123]});
+		},
+		testNumberFail1d : function(){			
+			this.signalNumber1.dispatch({x:[]});
+		},
+		testNumberFail1e : function(){			
+			this.signalNumber1.dispatch({x:{}});
+		},
+		testNumberFail1f : function(){			
+			this.signalNumber1.dispatch({x:new Date()});
+		},
+
+ 
+		
+		testNumberFail2a : function(){			
+			this.signalNumber2.dispatch({x:'123', y:0});
+		},
+		testNumberFail2b : function(){			
+			this.signalNumber2.dispatch({x:1, y:'123'});
+		},
+		testNumberFail2c : function(){			
+			this.signalNumber2.dispatch({x:'123', y:'ABC'});
+		},
+
+
+		testNumberFail4 : function(){			
+			this.signalNumber3.dispatch({x:-100, y:100});
+		},
+
+		testNumberFail5 : function(){			
+			this.signalNumber2.dispatch();
+		},
+
+		testNumberFail6 : function(){			
+			this.signalNumber2.dispatch({x:50});
+		},
+
+
+
+		//-------------------------- STRING ---------------------------------------//
+
+		testString : function(){
+			this.signalString1.add(function(x){this.x = x;}, this);
+			this.signalString2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalString3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			this.signalString1.dispatch({x:'0'});
+			this.signalString1.dispatch({x:'1'});
+			this.signalString1.dispatch({x:''});
+			this.signalString1.dispatch({x:'abc'});
+			this.signalString1.dispatch({x:'many words'});
+			
+			this.signalString2.dispatch({x:'0', y:'ABC'});
+			this.signalString2.dispatch({x:'ABC', y:'123'});
+			
+			this.signalString3.dispatch({x:'A', y:'A', z:'B'});
+			this.signalString3.dispatch({x:'A', y:'B', z:'C'});
+			this.signalString3.dispatch({x:'A', y:'B', z:'a few words'});
+			
+		},
+
+		testStringFail1 : function(){			
+			this.signalString1.dispatch();
+		},
+
+		testStringFail3 : function(){			
+			this.signalString1.dispatch({x:1});
+		},
+
+		testStringFail4 : function(){			
+			this.signalString3.dispatch({x:'abc', y:'ABC'});
+		},
+
+		testStringFail5 : function(){			
+			this.signalString2.dispatch({x:'A', y:123, z:'C'});
+		},
+
+		testStringFail6 : function(){			
+			this.signalString2.dispatch({x:'A', y:123});
+		},
+
+		testStringFail7 : function(){
+			this.signalString3.dispatch({x:'ABC', y:'ABC', z:123, a:'ABC'});
+		},
+		
+		//-------------------------- DATE ---------------------------------------//
+
+		testDate : function(){
+			this.signalDate1.add(function(x){this.x = x;}, this);
+			this.signalDate2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalDate3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var date1 = new Date();
+			var date2 = new Date(10000);
+			var date3 = new Date(100000);
+			
+			this.signalDate1.dispatch({x:date1});
+			this.signalDate1.dispatch({x:date2});
+			this.signalDate1.dispatch({x:date3});
+			
+			this.signalDate2.dispatch({x:date1, y:date2});
+			this.signalDate2.dispatch({x:date2, y:date3});
+			
+			this.signalDate3.dispatch({x:date1, y:date2, z:date3});
+		},
+		
+		testDateFail1 : function(){			
+			this.signalDate1.dispatch();
+		},
+		
+		testDateFail2 : function(){			
+			this.signalDate1.dispatch({x:123});
+		},
+		
+		testDateFail3 : function(){			
+			this.signalDate2.dispatch({x:new Date(), y:123});
+		},
+		
+		
+		
+		
+		
+		//-------------------------- Array ---------------------------------------//
+
+		testArray : function(){
+			this.signalArray1.add(function(x){this.x = x;}, this);
+			this.signalArray2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalArray3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var array1 = new Array(1,2,3,4,5,6,7,8);
+			var array2 = [];
+			var array3 = [123, 'abc', {}, new Date()];
+			
+			this.signalArray1.dispatch({x:array1});
+			this.signalArray1.dispatch({x:array2});
+			this.signalArray1.dispatch({x:array3});
+			
+			this.signalArray2.dispatch({x:array1, y:array2});
+			this.signalArray2.dispatch({x:array2, y:array3});
+			
+			this.signalArray3.dispatch({x:array1, y:array2, z:array3});
+		},
+		
+		testArrayFail1 : function ()
+		{
+			this.signalArray1.dispatch()
+		},
+		testArrayFail2 : function ()
+		{
+			this.signalArray1.dispatch({})
+		},
+		testArrayFail3 : function ()
+		{
+			this.signalArray1.dispatch({x:123})
+		},
+		testArrayFail4 : function ()
+		{
+			this.signalArray1.dispatch({x:'Array'})
+		},
+
+		
+		//-------------------------- Object ---------------------------------------//
+
+		testObject : function(){
+			this.signalObject1.add(function(x){this.x = x;}, this);
+			this.signalObject2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalObject3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var object1 = new Object();
+			var object2 = {};
+			var object3 = {a:123, b:'abc', c:{}, d:new Date()};
+			
+			this.signalObject1.dispatch({x:object1});
+			this.signalObject1.dispatch({x:object2});
+			this.signalObject1.dispatch({x:object3});
+			
+			this.signalObject2.dispatch({x:object1, y:object2});
+			this.signalObject2.dispatch({x:object2, y:object3});
+			
+			this.signalObject3.dispatch({x:object1, y:object2, z:object3});
+		},
+		
+		testObjectFail1 : function ()
+		{
+			this.signalObject1.dispatch()
+		},
+		testObjectFail2 : function ()
+		{
+			this.signalObject1.dispatch({x:undefined})
+		},
+		testObjectFail3 : function ()
+		{
+			this.signalObject1.dispatch({x:123})
+		},
+		testObjectFail4 : function ()
+		{
+			this.signalObject1.dispatch({x:'Object'})
+		},
+		
+		//-------------------------- CustomClass ---------------------------------------//
+
+		testCustomClass : function(){
+			this.signalCustomClass1.add(function(x){this.x = x;}, this);
+			this.signalCustomClass2.add(function(x, y){this.x = x; this.y = y;}, this);
+			this.signalCustomClass3.add(function(x, y, z){this.x = x; this.y = y; this.z = z;}, this);
+			
+			var obj1 = new CustomClass();
+			var obj2 = new CustomSubClass();			
+			var obj3 = Object.create(CustomClass);
+			var obj4 = Object.create(obj1);
+			var obj5 = Object.create(obj2);
+			
+			
+			this.signalCustomClass1.dispatch({x:obj1});
+			this.signalCustomClass1.dispatch({x:obj2});
+			this.signalCustomClass1.dispatch({x:obj3});
+			this.signalCustomClass1.dispatch({x:obj4});
+			this.signalCustomClass1.dispatch({x:obj5});
+			
+			
+			this.signalCustomClass2.dispatch({x:obj1, y:obj2});
+			this.signalCustomClass2.dispatch({x:obj2, y:obj3});
+			
+			this.signalCustomClass3.dispatch({x:obj1, y:obj2, z:obj3});
+		},
+		
+
+
+		testCustomClassFail1 : function ()
+		{
+			this.signalCustomClass1.dispatch()
+		},
+		testCustomClassFail2 : function ()
+		{
+			this.signalCustomClass1.dispatch({x:[]})
+		},
+		testCustomClassFail3 : function ()
+		{
+			this.signalCustomClass1.dispatch({x:{}})
+		},
+		testCustomClassFail4 : function ()
+		{
+			this.signalCustomClass1.dispatch({x:'CustomClass'})
+		},		
+		
+		//-------------------------- Mixed ---------------------------------------//
+
+		testMixed : function(){
+			//this.signalMixed = new signals.Signal(Number, String, Date, Array, Object, CustomClass);
+
+			this.signalMixed.add(function(a, b, c, d, e, f){}, this);
+
+			this.signalMixed.dispatch({x:0, y:'', z:new Date(), a:[], b:{}, c:new CustomClass()});
+			this.signalMixed.dispatch({x:-1, y:'ABC', z:new Date(1232456), a:[1,2,3], b:{a:123, b:'ABC'}, c:new CustomSubClass()});
+		},
+		
+		testMixedFail1 : function ()
+		{
+			this.signalMixed.dispatch()
+		},
+		testMixedFail2 : function ()
+		{
+			this.signalMixed.dispatch({x:[]})
+		},
+		testMixedFail3 : function ()
+		{
+			this.signalMixed.dispatch({x:{}})
+		},
+		testMixedFail4 : function ()
+		{
+			this.signalMixed.dispatch({x:0, y:'', z:new Date(), a:[], b:{}, c:new Object()});
+		},
+		testMixedFail5 : function ()
+		{
+			//passes???
+			this.signalMixed.dispatch({x:0, y:'', z:new Date(), a:[], b:{}, c:''});
+		}
+		
+		
+		
+		
+	});
+
+
+	//==============================================================================
+	// INIT ------------------------------------------------------------------------
+
+	//create the console
+	var r = new Y.Console({
+		verbose : true,
+		newestOnTop : false
+	});
+
+	r.render('#testLogger');
+
+	Y.Test.Runner.add(basic);
+	Y.Test.Runner.add(basic2);
+	Y.Test.Runner.add(basic3);
+	
+
+
+	
+
+	Y.Test.Runner.on('complete', function(){
+		var c = document.getElementById('coverageOutput');
+		if(c) c.value = Y.Test.Runner.getCoverage(Y.Coverage.Format.JSON);
+	});
+
+	//run the tests
+	Y.Test.Runner.run();
+	
 });
